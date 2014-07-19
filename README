@@ -1,0 +1,21 @@
+PhoneGap Build Sample
+
+This is a sample PhoneGap application built to demo PhoneGap Build and
+Web Inspector Remote (weinre).
+
+Expense Tracker Mobile HTML5 is licensed under the Apache Public License (Version 2).
+
+
+Notices from PhoneGap:
+
+PhoneGap is available under *either* the terms of the modified BSD license *or*
+the MIT License (2008). As a recipient of PhoneGap, you may choose which license
+to receive this code under (except as noted in per-module LICENSE files). Some
+modules may not be the copyright of Nitobi. These modules contain explicit 
+declarations of copyright in both the LICENSE files in the directories in which
+they reside and in the code itself. No external contributions are allowed under
+licenses which are fundamentally incompatible with the MIT or BSD licenses that
+PhoneGap is distributed under.
+
+Copyright (c) 2005-2010, Nitobi Software Inc.
+All rights reserved.

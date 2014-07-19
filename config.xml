@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns	= "http://www.w3.org/ns/widgets"
+	xmlns:gap	= "http://phonegap.com/ns/1.0"
+	id			= "com.mwriley.pgbuild.sample"
+	version		= "1.0.0">
+
+	<name>PhoneGap Build Sample</name>
+
+	<description>
+		A sample PhoneGap application built to demo PhoneGap Build and the PhoneGap cloud debugger.
+	</description>
+
+	<author href="http://matthewriley.us">
+		Matthew Riley
+	</author>
+
+	<gap:platforms>
+		<gap:platform name="android" minVersion="2.1" />
+		<gap:platform name="webos" />
+		<gap:platform name="symbian.wrt" />
+		<gap:platform name="blackberry" project="widgets"/>
+	</gap:platforms>
+	
+	<gap:plugin name="com.evothings.ble" version="1.0.0" />
+
+	<icon src="icon.png" gap:role="default" />
+
+	<feature name="http://api.phonegap.com/1.0/geolocation"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+
+</widget>
