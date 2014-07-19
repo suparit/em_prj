@@ -4,14 +4,14 @@
 	id			= "com.mwriley.pgbuild.sample"
 	version		= "1.0.0">
 
-	<name>PhoneGap Build Sample</name>
+	<name>eMotion Build Sample</name>
 
 	<description>
-		A sample PhoneGap application built to demo PhoneGap Build and the PhoneGap cloud debugger.
+		emt pilot test App
 	</description>
 
-	<author href="http://matthewriley.us">
-		Matthew Riley
+	<author href="http://emotion.us">
+		eMotion
 	</author>
 
 	<gap:platforms>
