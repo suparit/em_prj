@@ -113,24 +113,27 @@ document.getElementById('lblVehicle').innerHTML = "Web";//lblBike;
 	
 	function onDeviceReady() 
 	{
+	//==================================================================================
+	//==================================================================================
+	
+	//var postdata=  $(this).serialize();
 	$.ajax({
-    type       : "GET",
-    url        : "http://www.zp8661.tld.61.19.246.172.no-domain.name/index.php?emotion_sms=postbyphonegap",
-    crossDomain: true,
-    beforeSend : function() {},
-    complete   : function() {},
-    dataType   : 'Text',
-    success    : function(response) {
-       console.error(JSON.stringify(response));
+    type       : 'POST',
+	data : 'emotion_sms=postbyphonegap',
+    url        : 'http://www.zp8661.tld.61.19.246.172.no-domain.name/index.php',
+    success    : function(data) 
+	{
+        console.log(data);
         alert('Works!');
     },
     error      : function() 
 	{
-        console.error("error");
+        console.log("data");
         alert('Not working!');                  
     }
 });   
-	
+	//==================================================================================
+	//==================================================================================
 	}
 	
 	
@@ -148,7 +151,7 @@ var ref = window.open('http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.ph
 
 // attach listener to loadstart
 ref.addEventListener('loadstart', function(event) 
-{ 
+   { 
     var urlSuccessPage = 'http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php';
 	//alert(event.url);
 	ref.close(); 
