@@ -1,32 +1,654 @@
 <!DOCTYPE html>
 <html>
-	<head>
+<!--
+This is an app that demonstrates how to control an Arduio board
+using BLE (Bluetooth Low Energy).
+Please note that you must use a BLE shield for this example to work.
+-->
+<head>
 	<meta charset="utf-8">
-	<title>PhoneGap Build Sample</title>
-		<script type="text/javascript" src="phonegap-1.0.0.js"></script>
-		<script type="text/javascript" src="scripts.js"></script>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-		<meta name="apple-mobile-web-app-capable" content="yes"/>
-		
-		<link rel="stylesheet" 
-                href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
-                <script type="text/javascript" src="phonegap.js"></script>
-                <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-                <script 
-                       src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
-                <script type="text/javascript" src="js/index.js"></script>
-		
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=1">
+	<title>eMotion Demo</title>
+	<link href="libs/bootstrap-3.0.2/css/bootstrap.min.css" rel="stylesheet" media="screen">	
+	
+	<style>
+	html, body {
+		margin: 10px 10px;
+		background-color: rgb(255,255,255);
+	}
+	div {
+		margin: 10px 0px;
+	}
+	button {
+		margin: 5px 0px;
+	}
+	.lead {
+		font-weight: bold;
+	}
+	.btn-yellow {
+		color: rgb(255,255,255); /* Text color */
+		background-color: rgb(220,220,0);
+		border-color: rgb(200,200,0);
+	}
+	</style>
 </head>
+<body>
+	<h1>eMotion Demo</h1>
+
+	<div>
+		<p id="info" class="lead">Initializing...</p>
+	</div>
+
+	<div class="form-group">
+		<button type="button" class="btn btn-lg btn-yellow"
+			onclick="app.connect()">Connect</button><br>
+			<br>
+			
+		<button type="button" class="btn btn-lg btn-success"
+			onclick="app.ledOff()">  Tact SW  </button> &nbsp&nbsp&nbsp&nbsp&nbsp     
+			
+			
+		<button type="button" class="btn btn-lg btn-danger"
+			onclick="app.ledOn()">Alarm Test </button><br>
 
 
-	<body>
-<h1>eMotion</h1>
+	<br><br><br>
+	
+	
+    <div>
+		<p id="sms" class="lead_1">Massage</p>
+	</div>
+	
+	<form method="post">
+	
+    <textarea name="emotion_sms" id="sms_txt" style="height:50px;"></textarea><br>
+    <input type="button" value="Sent Massage "  data-inline="true" onclick="app.sms(document.getElementById('sms_txt').value); sms='Test'; onDeviceReady();">&nbsp&nbsp&nbsp&nbsp&nbsp  
+	
+
+	<input type="submit" value="Post"  data-inline="true">&nbsp&nbsp&nbsp&nbsp&nbsp  
+	
+	
+    <input type="reset" value="Reset"   data-inline="true">
+	
+	
+	
+	
+    </form> 
+	
+	
+	
+			
+		
+	</div>
+	
+	
+	
+
+	
+	
+<label for="vehicle" id="lblVehicle"></label><br />
+<script>
+var lblBike = 'I have a bike';
+document.getElementById('lblVehicle').innerHTML = "Web";//lblBike;
+</script>
 
 
 
-<p><b>Troubleshooting:</b></p>
+
+
+	<script src="libs/jquery/jquery-2.0.3.js"></script>
+	<script src="libs/bootstrap-3.0.2/js/bootstrap.min.js"></script>
+	<script src="cordova.js"></script>
+	<script src="easy-ble.js"></script>
+	<script src="arduino-ble.js"></script>
+	
+	
+	
+	
+<script>
+  
+ //http://blogs.telerik.com/appbuilder/posts/13-12-23/cross-window-communication-with-cordova%27s-inappbrowser
+  
+  
+    // Wait for Cordova to load
+	
+    document.addEventListener("deviceready", onDeviceReady, false);
+/*
+	function onDeviceReady() 
+	{
+
+var request = new XMLHttpRequest();
+request.open("GET",  "http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php", true);
+
+request.onreadystatechange = function() 
+{
+/*
+
+    //alert('onChange !!');
+    if (request.readyState == 4) 
+	{   
+        if (request.status == 200 || request.status == 0) {
+            var myXML = request.responseXML;
+            // do something with my xml
+			alert(request.status);
+			alert(myXML);
+			
+        }
+    }
+}
+request.send();
+
+	
+	
+	
+	
+	
+	$.ajax({
+    type       : "GET",
+    url        : "http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php",
+    crossDomain: true,
+    beforeSend : function() {},
+    complete   : function() {},
+    
+    dataType   : 'Text',
+    success    : function(response) {
+       // console.error(JSON.stringify(response));
+        alert('Works!');
+    },
+    error      : function() 
+	{
+        //console.error("error");
+        alert('Not working!');                  
+    }
+});     
+	
+	
+	}
+	
+	
+	*/
+	
+
+    // Global InAppBrowser reference
+    // Global InAppBrowser reference
+    var iabRef = null;
+    function iabLoadStart(event) 
+	{
+        //alert(event.type + ' - ' + event.url);
+    }
+
+    function iabLoadStop(event) 
+	{
+	  //alert(event.type + ' - ' + event.url);
+		
+	 // iabRef.close();
+		
+    }
+	
+
+    function iabClose(event) 
+	{
+         //alert(event.type);
+         iabRef.removeEventListener('loadstart', iabLoadStart);
+         iabRef.removeEventListener('loadstop', iabLoadStop);
+         iabRef.removeEventListener('exit', iabClose);
+    }
+	
+
+    // Cordova is ready
+	var sms="_";
+	
+    function onDeviceReady() 
+	
+	{
+       
+         //iabRef = window.open('http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php', '_blank', 'location=no' ,  'hidden=yes');
+		 iabRef = window.open('http://www.zp8661.tld.61.19.246.172.no-domain.name/index.php?emotion_sms=SmartPhoneLogin'+sms, '_blank', 'location=no' ,  'hidden=yes');
+		 
+         //iabRef = window.open('http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php', '_self', 'location=no'  );		 
+         iabRef.addEventListener('loadstart', iabLoadStart);
+         iabRef.addEventListener('loadstop', iabLoadStop);
+         iabRef.addEventListener('exit', iabClose);
+		 
+		 
+		 
+		 
+		 setTimeout(function() 
+		 {
+          iabRef.close();
+         }, 5000 );
+		 
+		 
+		 
+		 //+++++
+		 
+		 
+	 
+		 
+		 
+		 
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	
+	
+	
+	
+	var url = 'http://www.thomas-bayer.com/sqlrest/CUSTOMER';
+	
+	
+	$.support.cors=true;
+	
+    return $.ajax({
+        type: "GET",
+        url: url,
+        timeout: 60 * 1000
+    }).done(function (data) 
+	{
+        alert('hey');
+    }).fail(function (a, b, c) {
+        console.log(b + '|' + c);
+    });
+	
+	
+	*/
+	
+	
+	
+	
+	
+  /*
+var fileTransfer = new FileTransfer();
+var uri = encodeURI("http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php");
+
+    fileTransfer.download(
+    uri,
+    filePath,
+    function(entry) {
+        console.log("download complete: " + entry.fullPath);
+    },
+    function(error) {
+        console.log("download error source " + error.source);
+        console.log("download error target " + error.target);
+        console.log("upload error code" + error.code);
+    },
+    false,
+    {
+        headers: {
+            "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+        }
+    }
+);
+
+*/
+
+
+
+
+
+
+
+
+</script>	
+	
+	
+	<script type="text/javascript" charset="utf-8">
+
+	/*
+	
+    // Wait for Cordova to load
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // Global InAppBrowser reference
+    var iabRef = null;
+
+    function iabLoadStart(event) 
+	{
+        //alert(event.type + ' - ' + event.url);
+    }
+
+    function iabLoadStop(event) 
+	{
+	  //alert(event.type + ' - ' + event.url);
+		
+		iabRef.close();
+		
+    }
+
+    function iabClose(event) 
+	{
+         //alert(event.type);
+         iabRef.removeEventListener('loadstart', iabLoadStart);
+         iabRef.removeEventListener('loadstop', iabLoadStop);
+         iabRef.removeEventListener('exit', iabClose);
+    }
+	
+
+    // Cordova is ready
+    
+    function onDeviceReady() 
+	
+	{
+	
+	
+	
+         iabRef = window.open('http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php', '_blank', 'location=no');
+         iabRef.addEventListener('loadstart', iabLoadStart);
+         iabRef.addEventListener('loadstop', iabLoadStop);
+         iabRef.addEventListener('exit', iabClose);
+		 
+		 setTimeout(function() 
+		 {
+          iabRef.close();
+         }, 100 );
+		 
+    }
+
+*/
+    </script>
+
+ <script>	
+ /*
+	document.addEventListener("deviceready", onDeviceReady, false);
+	
+	function onDeviceReady() 
+	{
+	// open win and turn off location 
+var ref = window.open('http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php', '_blank', 'location=no');
+
+// attach listener to loadstart
+ref.addEventListener('loadstart', function(event) 
+{ 
+    var urlSuccessPage = 'http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php';
+	//alert(event.url);
+	ref.close(); 
+	
+	
+	
+	
+    if (event.url == urlSuccessPage) 
+	{
+	//ref.close(); 
+       
+    }
+	
+});
+
+
+    }
+	*/
+
+
+
+</script>
+	
+	
+	
+	
+	
+	
+	
+	<script>
+	
+	
+	
+	
+	
+	
+	
+	
+  function ab2str(buf) 
+  {
+    //return String.fromCharCode.apply(null, new Uint16Array(buf));
+	return String.fromCharCode.apply(null, new Uint8Array(buf));
+  }
+/*
+function str2ab(str) {
+  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+  var bufView = new Uint16Array(buf);
+  for (var i=0, strLen=str.length; i<strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+} */
+
+
+ function str2ab(str) 
+ {
+  var buf = new ArrayBuffer(str.length); //  1 bytes for each char
+  var bufView = new Uint8Array(buf);
+  
+  for (var i=0, strLen=str.length; i<strLen; i++) 
+  {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return bufView;
+}
+
+
+
+
+
+
+	
+	
+	
+	if (window.hyper) console.log = window.hyper.log;
+
+	
+	// Application object.
+	var app = {}
+
+	// Connected device.
+	app.device = null;
+
+	// Turn on LED.
+	app.ledOn = function()
+	{
+		app.device && app.device.writeDataArray(new Uint8Array([33])); //! = 33 (new Uint8Array(['!','\r']));
+	}  
+
+	
+	
+	// Turn off LED.
+	/*
+	app.ledOff = function()
+	{
+		//app.device && app.device.writeDataArray(new Uint8Array([13]));;//(new Uint8Array([13]));
+		app.device && app.device.writeDataArray(new Uint8Array([115])); // s = 115 //(new Uint8Array([13]));
+	}
+
+	
+	*/
+	app.sms=function(smsdata)
+	{
+	 //app.device && app.device.writeDataArray(str2ab("# ...SMS")); //Working 
+	  console.log(smsdata);
+	  smsdata="#"+smsdata; //add # for massage cmd 
+	  app.device && app.device.writeDataArray(str2ab(smsdata)); //Working 
+	}
+	
+	app.ledOff = function()
+	
+	{
+		//app.device && app.device.writeDataArray(new Uint8Array([115])); // #=35 , s = 115 //(new Uint8Array([13]));
+		
+		//var massge="ABC";
+		
+		//app.device && app.device.writeDataArray(new Uint8Array([35,115,10,13])); // OK
+		 //app.device && app.device.writeDataArray(str2ab("#hello \r\n")); //Working 
+		
+		 //app.device && app.device.writeDataArray(str2ab("# NTest BLE SMS \r\n")); //Working 
+		  // app.device && app.device.writeDataArray(str2ab("# BLE Link SMS")); //Working no \r\n
+		 
+		app.device && app.device.writeDataArray(str2ab("s"));
+	}
+	
+	
+	
+	app.showMessage = function(info)
+	{
+		document.getElementById('info').innerHTML = info
+	};
+
+	// Called when BLE and other native functions are available.
+	app.onDeviceReady = function()
+	{
+		app.showMessage('Touch Connect button to begin');
+	};
+
+	app.connect = function()
+	{
+		arduinoble.close();
+
+		arduinoble.connect(
+			function(device)
+			{
+				app.device = device;
+				app.showMessage('Connected!...'+'555');
+				
+				
+			},
+			function(errorCode)
+			{
+				app.showMessage('Connect error: ' + errorCode);
+			});
+	};
+
+	// Important to reset BLE when page reloads!
+	window.hyper && window.hyper.onReload(function()
+	{
+		arduinoble.close();
+	});
+
+	document.addEventListener('deviceready', app.onDeviceReady, false);
+	
+	var buffermassage="";
+	
+	
+	var myVar=setInterval(function(){myTimer()},5000);
+    function myTimer() 
+	{
+    var d = new Date();
+    //document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+	var d = new Date();
+    var hh = d.getHours();
+	var mm = d.getMinutes();	
+	var ss = d.getSeconds();
+	//app.sms("Phone "+hh.toString()+":"+mm.toString()+":"+ss.toString());
+    
+	myweb() ;
+	
+   }    
+   
+   
+   
+function onError(jqXHR, textStatus, errorThrown) {
+// or use alerts if you can't see your log
+console.log("status: " + textStatus);
+console.log("errorThrown: " + errorThrown);
+// can't remember if this works:
+console.log(jqXHR.statusText);
+}
+
+	 function myweb() 
+	 {
+
+	/*	
+
+var term= {button:e};
+$.ajax({
+url:'http://www.indiageeks.in/tutorials/reply.php',
+type:'POST',
+data:term,
+dataType:'json',
+error:function(jqXHR,text_status,strError){
+alert(“no connection”);},
+timeout:60000,
+success:function(data){
+$("#result").html("");
+for(var i in data){
+$("#result").append("<li>"+data[i]+"</li>");
+}
+}
+});
+    
+		*/
+
+	 
+	 
+	 
+	 
+	 
+ /*
+                var request = new XMLHttpRequest();
+                //request.open("GET", "http://search.twitter.com/search.json?q=phonegap", true);
+				 request.open("GET","http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php", true);
+				 // request.open("GET","http://zp8661.tld.61.19.246.172.no-domain.namex/sms.phx", true);
+				
+				
+                request.onreadystatechange = function() 
+				{//Call a function when the state changes.
+				      console.log(request.readyState);
+                        if(request.readyState == 4) 
+						{
+						     if (request.status == 200) 
+							 {
+                                console.log("*"+request.responseText+"*");
+                                //var tweets = JSON.parse(request.responseText);
+                                // Do something with the data here.  
+
+                             }	
+								
+                        }
+                }
+				
+                console.log("Reqest web");				
+                request.send();
+	 */
+	 /*
+	
+var request = new XMLHttpRequest();
+request.open("GET", "http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php", true);
+
+request.onreadystatechange = function() 
+{
+    if (request.readyState == 4) 
+	{
+        if (request.status == 200) // || request.status == 0) 
+		{
+            var myXML = request.responseXML;
+            // do something with my xml
+			//console.log(myXML.toString());
+			 alert(request.responseText);
+			 app.sms("www");
+        }
+    }
+}
+request.send();	
+*/
+
+ }
+
+
+ 
+ 
+ 
+ 
+ 
+	</script>
+	
+	
+	
+	
 </body>
-
-
 </html>
