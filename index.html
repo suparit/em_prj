@@ -105,57 +105,36 @@ document.getElementById('lblVehicle').innerHTML = "Web";//lblBike;
 	
 	<script type="text/javascript" charset="utf-8">
 
-	/*
+	
 	
     // Wait for Cordova to load
     document.addEventListener("deviceready", onDeviceReady, false);
-
-    // Global InAppBrowser reference
-    var iabRef = null;
-
-    function iabLoadStart(event) 
+	
+	
+	function onDeviceReady() 
 	{
-        //alert(event.type + ' - ' + event.url);
-    }
-
-    function iabLoadStop(event) 
+	$.ajax({
+    type       : "GET",
+    url        : "http://www.zp8661.tld.61.19.246.172.no-domain.name/index.php?emotion_sms=postbyphonegap",
+    crossDomain: true,
+    beforeSend : function() {},
+    complete   : function() {},
+    dataType   : 'Text',
+    success    : function(response) {
+       // console.error(JSON.stringify(response));
+        alert('Works!');
+    },
+    error      : function() 
 	{
-	  //alert(event.type + ' - ' + event.url);
-		
-		iabRef.close();
-		
+        //console.error("error");
+        alert('Not working!');                  
     }
-
-    function iabClose(event) 
-	{
-         //alert(event.type);
-         iabRef.removeEventListener('loadstart', iabLoadStart);
-         iabRef.removeEventListener('loadstop', iabLoadStop);
-         iabRef.removeEventListener('exit', iabClose);
-    }
+});   
 	
-
-    // Cordova is ready
-    
-    function onDeviceReady() 
-	
-	{
+	}
 	
 	
 	
-         iabRef = window.open('http://www.zp8661.tld.61.19.246.172.no-domain.name/sms.php', '_blank', 'location=no');
-         iabRef.addEventListener('loadstart', iabLoadStart);
-         iabRef.addEventListener('loadstop', iabLoadStop);
-         iabRef.addEventListener('exit', iabClose);
-		 
-		 setTimeout(function() 
-		 {
-          iabRef.close();
-         }, 100 );
-		 
-    }
-
-*/
     </script>
 
  <script>	
